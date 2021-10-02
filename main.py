@@ -66,4 +66,7 @@ draw_graph(
 
 leaders = get_leader_nodes(ba_graph, leader_number=3)
 
+import yaml
 
+with open("configs/world_features.yaml", 'r') as stream:
+    world_features = yaml.safe_load(stream)

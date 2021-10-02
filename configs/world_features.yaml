@@ -1,0 +1,12 @@
+races:
+ - human
+ - dwarf
+ - elf
+ - halfling
+genders:
+ - male
+ - female
+factions:
+ - imperials
+ - independents
+ - pirates
