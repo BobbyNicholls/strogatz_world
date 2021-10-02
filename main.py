@@ -51,9 +51,17 @@ def get_leader_nodes(G, leader_number=3):
     )
 
 
+def get_random_node_features():
+    return {
+        "race": np.random.choice(world_features["races"]),
+        "gender": np.random.choice(world_features["genders"]),
+        "faction": np.random.choice(world_features["factions"]),
+    }
+
+
 # this graph results in random associations and therefore isnt as good at accurately modelling a society
-G = nx.watts_strogatz_graph(n=20, k=5, p=0.2)
-draw_graph(G, pos_nodes=nx.shell_layout(G), node_size=200, plot_weight=True)
+# G = nx.watts_strogatz_graph(n=20, k=5, p=0.2)
+# draw_graph(G, pos_nodes=nx.shell_layout(G), node_size=200, plot_weight=True)
 
 # this one has a 'preferential attachment schema' which means when we add new nodes they are more likely to be attached
 # to already central nodes. This results in "influencer nodes" which become increasingly central as a result of their
@@ -70,14 +78,6 @@ with open("configs/world_features.yaml", "r") as stream:
     world_features = yaml.safe_load(stream)
 
 
-def get_random_node_features():
-    return {
-        "race": np.random.choice(world_features["races"]),
-        "gender": np.random.choice(world_features["genders"]),
-        "faction": np.random.choice(world_features["factions"]),
-    }
-
-
 leaders = get_leader_nodes(ba_graph, leader_number=3)
 leader_node_attributes = {
     node: features
@@ -87,4 +87,24 @@ leader_node_attributes = {
 }
 nx.set_node_attributes(ba_graph, leader_node_attributes)
 
-ba_graph.nodes(data=True)
+x = ba_graph.nodes(data=True)
+
+egos = set(leaders)
+for ego in egos:
+    ego_attributes = ba_graph.nodes[ego]
+    followers = list(nx.ego_graph(ba_graph, ego, radius=1, center=True, undirected=True).nodes())
+    for follower in followers:
+        if len(ba_graph.nodes[follower]) == 0:
+            nx.set_node_attributes(ba_graph, {follower: ego_attributes})
+
+while len(egos) < len(ba_graph):
+    new_egos = set([node for node in ba_graph.nodes if len(ba_graph.nodes[node]) != 0]).difference(egos)
+    for ego in new_egos:
+        ego_attributes = ba_graph.nodes[ego]
+        followers = list(nx.ego_graph(ba_graph, ego, radius=1, center=True, undirected=True).nodes())
+        for follower in followers:
+            if len(ba_graph.nodes[follower]) == 0:
+                nx.set_node_attributes(ba_graph, {follower: ego_attributes})
+        egos.add(ego)
+
+ba_graph
