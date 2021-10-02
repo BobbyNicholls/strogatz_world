@@ -5,6 +5,9 @@ import numpy as np
 import pandas as pd
 import yaml
 
+LEADER_NUMBER = 3
+POPULATION = 3000
+
 
 def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
     nx.draw(
@@ -67,7 +70,7 @@ def get_random_node_features():
 # to already central nodes. This results in "influencer nodes" which become increasingly central as a result of their
 # centrality, exhibiting a "power-law distribution" for connectivity between nodes that more accurately represents
 # reality in social networks
-ba_graph = nx.extended_barabasi_albert_graph(3000, 1, 0, 0)
+ba_graph = nx.extended_barabasi_albert_graph(POPULATION, 1, 0, 0)
 # draw_graph(
 #     ba_graph, pos_nodes=nx.shell_layout(ba_graph), node_size=200, plot_weight=True
 # )
@@ -78,7 +81,7 @@ with open("configs/world_features.yaml", "r") as stream:
     world_features = yaml.safe_load(stream)
 
 
-leaders = get_leader_nodes(ba_graph, leader_number=20)
+leaders = get_leader_nodes(ba_graph, leader_number=LEADER_NUMBER)
 leader_node_attributes = {
     node: features
     for node, features in zip(
