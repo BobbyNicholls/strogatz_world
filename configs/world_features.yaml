@@ -3,6 +3,12 @@ races:
  - dwarf
  - elf
  - halfling
+ - orc
+ - dragonkin
+ - tiefling
+ - gnome
+ - kobold
+ - beastmen
 genders:
  - male
  - female
