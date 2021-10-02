@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 import netwulf as nw
+import pandas as pd
+
 
 def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
     nx.draw(
@@ -31,6 +33,22 @@ def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
     axis.set_ylim([1.2 * y for y in axis.get_ylim()])
 
 
+def get_leader_nodes(G, leader_number=3):
+    """
+    get top X leaders by degree centrality
+    """
+    # TODO: find way to determine number of leaders dynamically
+    return (
+        pd.DataFrame(
+            nx.centrality.degree_centrality(G).items(),
+            columns=["node", "centrality"],
+        )
+        .sort_values("centrality", ascending=False)["node"]
+        .iloc[:leader_number]
+        .values
+    )
+
+
 # this graph results in random associations and therefore isnt as good at accurately modelling a society
 G = nx.watts_strogatz_graph(n=20, k=5, p=0.2)
 draw_graph(G, pos_nodes=nx.shell_layout(G), node_size=200, plot_weight=True)
@@ -39,7 +57,13 @@ draw_graph(G, pos_nodes=nx.shell_layout(G), node_size=200, plot_weight=True)
 # to already central nodes. This results in "influencer nodes" which become increasingly central as a result of their
 # centrality, exhibiting a "power-law distribution" for connectivity between nodes that more accurately represents
 # reality in social networks
-ba_graph = nx.extended_barabasi_albert_graph(500, 1, 0, 0)
-draw_graph(ba_graph, pos_nodes=nx.shell_layout(ba_graph), node_size=200, plot_weight=True)
+ba_graph = nx.extended_barabasi_albert_graph(50, 1, 0, 0)
+draw_graph(
+    ba_graph, pos_nodes=nx.shell_layout(ba_graph), node_size=200, plot_weight=True
+)
 
-nw.visualize(ba_graph)
+# nw.visualize(ba_graph)
+
+leaders = get_leader_nodes(ba_graph, leader_number=3)
+
+
