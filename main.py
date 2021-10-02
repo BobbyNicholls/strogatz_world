@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 import netwulf as nw
+import numpy as np
 import pandas as pd
+import yaml
 
 
 def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
@@ -64,9 +66,25 @@ draw_graph(
 
 # nw.visualize(ba_graph)
 
-leaders = get_leader_nodes(ba_graph, leader_number=3)
-
-import yaml
-
-with open("configs/world_features.yaml", 'r') as stream:
+with open("configs/world_features.yaml", "r") as stream:
     world_features = yaml.safe_load(stream)
+
+
+def get_random_node_features():
+    return {
+        "race": np.random.choice(world_features["races"]),
+        "gender": np.random.choice(world_features["genders"]),
+        "faction": np.random.choice(world_features["factions"]),
+    }
+
+
+leaders = get_leader_nodes(ba_graph, leader_number=3)
+leader_node_attributes = {
+    node: features
+    for node, features in zip(
+        leaders, [get_random_node_features() for _ in range(len(leaders))]
+    )
+}
+nx.set_node_attributes(ba_graph, leader_node_attributes)
+
+ba_graph.nodes(data=True)
