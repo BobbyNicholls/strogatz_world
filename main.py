@@ -67,10 +67,10 @@ def get_random_node_features():
 # to already central nodes. This results in "influencer nodes" which become increasingly central as a result of their
 # centrality, exhibiting a "power-law distribution" for connectivity between nodes that more accurately represents
 # reality in social networks
-ba_graph = nx.extended_barabasi_albert_graph(50, 1, 0, 0)
-draw_graph(
-    ba_graph, pos_nodes=nx.shell_layout(ba_graph), node_size=200, plot_weight=True
-)
+ba_graph = nx.extended_barabasi_albert_graph(9999, 1, 0, 0)
+# draw_graph(
+#     ba_graph, pos_nodes=nx.shell_layout(ba_graph), node_size=200, plot_weight=True
+# )
 
 # nw.visualize(ba_graph)
 
@@ -78,7 +78,7 @@ with open("configs/world_features.yaml", "r") as stream:
     world_features = yaml.safe_load(stream)
 
 
-leaders = get_leader_nodes(ba_graph, leader_number=3)
+leaders = get_leader_nodes(ba_graph, leader_number=5)
 leader_node_attributes = {
     node: features
     for node, features in zip(
@@ -87,24 +87,49 @@ leader_node_attributes = {
 }
 nx.set_node_attributes(ba_graph, leader_node_attributes)
 
-x = ba_graph.nodes(data=True)
-
 egos = set(leaders)
 for ego in egos:
     ego_attributes = ba_graph.nodes[ego]
-    followers = list(nx.ego_graph(ba_graph, ego, radius=1, center=True, undirected=True).nodes())
+    followers = list(
+        nx.ego_graph(ba_graph, ego, radius=1, center=True, undirected=True).nodes()
+    )
     for follower in followers:
         if len(ba_graph.nodes[follower]) == 0:
             nx.set_node_attributes(ba_graph, {follower: ego_attributes})
 
 while len(egos) < len(ba_graph):
-    new_egos = set([node for node in ba_graph.nodes if len(ba_graph.nodes[node]) != 0]).difference(egos)
+    # TODO: make this node querying more efficient
+    new_egos = set(
+        [node for node in ba_graph.nodes if len(ba_graph.nodes[node]) != 0]
+    ).difference(egos)
     for ego in new_egos:
         ego_attributes = ba_graph.nodes[ego]
-        followers = list(nx.ego_graph(ba_graph, ego, radius=1, center=True, undirected=True).nodes())
+        followers = (
+            set(
+                nx.ego_graph(
+                    ba_graph, ego, radius=1, center=True, undirected=True
+                ).nodes()
+            )
+            .difference(new_egos)
+            .difference(egos)
+        )
         for follower in followers:
             if len(ba_graph.nodes[follower]) == 0:
                 nx.set_node_attributes(ba_graph, {follower: ego_attributes})
         egos.add(ego)
 
-ba_graph
+# nx.write_gexf(ba_graph, "communities.gexf")
+
+for node in ba_graph.nodes():
+    attributes = ba_graph.nodes[node]
+    attributes["group"] = attributes["race"]
+    nx.set_node_attributes(ba_graph, {node: attributes})
+
+ba_graph = nx.relabel_nodes(
+    ba_graph,
+    {
+        node: f"{ba_graph.nodes[node]['race']}: {ba_graph.nodes[node]['faction']} {node}"
+        for node in ba_graph.nodes()
+    },
+)
+nw.visualize(ba_graph)
