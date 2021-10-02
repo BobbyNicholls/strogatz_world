@@ -1,16 +1,45 @@
-# This is a sample Python script.
+import matplotlib.pyplot as plt
+import networkx as nx
+import netwulf as nw
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
+    nx.draw(
+        G,
+        pos_nodes,
+        with_labels=False,
+        node_size=node_size,
+        edge_color="gray",
+        arrowsize=30,
+    )
+
+    pos_attrs = {}
+    for node, coords in pos_nodes.items():
+        pos_attrs[node] = (coords[0], coords[1] + 0.08)
+
+    nx.draw_networkx_labels(G, pos_attrs, font_family="serif", font_size=20)
+
+    if plot_weight:
+        pos_attrs = {}
+        for node, coords in pos_nodes.items():
+            pos_attrs[node] = (coords[0], coords[1] + 0.08)
+
+        nx.draw_networkx_labels(G, pos_attrs, font_family="serif", font_size=20)
+
+    plt.axis("off")
+    axis = plt.gca()
+    axis.set_xlim([1.2 * x for x in axis.get_xlim()])
+    axis.set_ylim([1.2 * y for y in axis.get_ylim()])
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# this graph results in random associations and therefore isnt as good at accurately modelling a society
+G = nx.watts_strogatz_graph(n=20, k=5, p=0.2)
+draw_graph(G, pos_nodes=nx.shell_layout(G), node_size=200, plot_weight=True)
 
+# this one has a 'preferential attachment schema' which means when we add new nodes they are more likely to be attached
+# to already central nodes. This results in "influencer nodes" which become increasingly central as a result of their
+# centrality, exhibiting a "power-law distribution" for connectivity between nodes that more accurately represents
+# reality in social networks
+ba_graph = nx.extended_barabasi_albert_graph(500, 1, 0, 0)
+draw_graph(ba_graph, pos_nodes=nx.shell_layout(ba_graph), node_size=200, plot_weight=True)
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+nw.visualize(ba_graph)
