@@ -1,25 +1,48 @@
 import numpy as np
-
-p1 = np.array([[2, 1], [21, 750]])
-p2 = np.array([[6, 19], [9, 2]])
+from utils import get_random_node_features
 
 # left argument "influences" the right argument,
 # the first arg determines the row beleif, and the second the column belief
 # This means the column of the second argument is "listening" for the values of the row of the first
-np.dot(p1, p2)
-
-ITERATION = 1
 
 
 class Entity:
     def __init__(self, feature_vector, beliefs):
+        assert type(beliefs) == np.ndarray, "beliefs must be array"
         self.feature_vector = feature_vector
-        self.beliefs[0] = beliefs
+        self.beliefs = {ITERATION - 1: beliefs/beliefs.sum()}
 
     def propagate_belief(self, influencer):
         self.beliefs[ITERATION] = np.dot(
             influencer.beliefs[ITERATION - 1], self.beliefs[ITERATION - 1]
         )
+        self.beliefs[ITERATION] = self.beliefs[ITERATION]/self.beliefs[ITERATION].sum()
+
+    def iterate_belief(self):
+        self.beliefs[ITERATION] = self.beliefs[ITERATION - 1].copy()
+
+
+if __name__ == "__main__":
+    ITERATION = 1
+    e1 = Entity(
+        feature_vector=get_random_node_features(), beliefs=np.array([[10, 15], [5, 4]])
+    )
+    e2 = Entity(
+        feature_vector=get_random_node_features(), beliefs=np.array([[1, 1], [59, 72]])
+    )
+    e3 = Entity(
+        feature_vector=get_random_node_features(), beliefs=np.array([[2, 1], [50, 55]])
+    )
+    while ITERATION < 100:
+        e1.propagate_belief(influencer=e3)
+        e2.propagate_belief(influencer=e3)
+        e3.iterate_belief()
+        ITERATION += 1
+
+    first_iteration = min(e1.beliefs.keys())
+    last_iteration = max(e1.beliefs.keys())
+    print(f"First iteration: {e1.beliefs[first_iteration][0].sum() / e1.beliefs[first_iteration][1].sum()}")
+    print(f"Last iteration: {e1.beliefs[last_iteration][0].sum() / e1.beliefs[last_iteration][1].sum()}")
 
 
 """
