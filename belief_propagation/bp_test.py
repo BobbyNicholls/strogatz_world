@@ -1,15 +1,25 @@
 import numpy as np
 
-p1 = np.array([[2, 1],
-               [21, 750]])
-p2 = np.array([[6, 19],
-               [9, 2]])
+p1 = np.array([[2, 1], [21, 750]])
+p2 = np.array([[6, 19], [9, 2]])
 
 # left argument "influences" the right argument,
 # the first arg determines the row beleif, and the second the column belief
 # This means the column of the second argument is "listening" for the values of the row of the first
 np.dot(p1, p2)
 
+ITERATION = 1
+
+
+class Entity:
+    def __init__(self, feature_vector, beliefs):
+        self.feature_vector = feature_vector
+        self.beliefs[0] = beliefs
+
+    def propagate_belief(self, influencer):
+        self.beliefs[ITERATION] = np.dot(
+            influencer.beliefs[ITERATION - 1], self.beliefs[ITERATION - 1]
+        )
 
 
 """
@@ -17,8 +27,7 @@ Ok lets create a scenario, an individual with a fairly strong beleif that someth
 beleif and the rows how they respond to the belief of others:
 """
 
-p1 = np.array([[1, 15],
-              [5, 50]])
+p1 = np.array([[1, 15], [5, 50]])
 
 """
 note that the person represented by potential 1 will beleive in the thing more strongly if their influence does too, so
@@ -32,19 +41,16 @@ lets take some examples of influences:
 # but really it just makes the row in to the exact same ratio as whatever you put in the bottom row of the influencer,
 # which doesnt feel great because then we arent really considering the original views of the node. That being said, the
 # column ratio is now 10.83:1 on both levels individually and in total (65+325)/(6+30) = 10.833..
-p2 = np.array([[1, 1],
-               [5, 5]])
+p2 = np.array([[1, 1], [5, 5]])
 print(str(np.dot(p2, p1)) + "\n========\n")
 
 # the influence that rejects it strongly
-p3 = np.array([[50, 55],
-               [2, 1]])
+p3 = np.array([[50, 55], [2, 1]])
 print(str(np.dot(p3, p1)) + "\n========\n")
 
 # the indifferent influence, what we notice here is that the strength of the belief doesnt change, but how we are
 # influenced does (we are no longer strongly influenced)
-p4 = np.array([[1, 1],
-               [1, 1]])
+p4 = np.array([[1, 1], [1, 1]])
 print(str(np.dot(p4, p1)) + "\n========\n")
 
 
@@ -53,18 +59,17 @@ now lets look at evidence
 """
 
 # the evidence that confirms it 100%
-e1 = np.array([[0,1]])
+e1 = np.array([[0, 1]])
 print(str(np.dot(e1, p1)) + "\n========\n")
 
 # the evidence that represents strong confirmation
-e2 = np.array([8,2])
+e2 = np.array([8, 2])
 print(str(np.dot(e2, p1)) + "\n========\n")
 
 # the strong rejection, this means bottom heavy
-e3 = np.array([[1,1],
-               [10,10]])
+e3 = np.array([[1, 1], [10, 10]])
 print(str(np.dot(e3, p1)) + "\n========\n")
 
 # the 100% rejection
-e4 = np.array([1,0])
+e4 = np.array([1, 0])
 print(str(np.dot(e4, p1)) + "\n========\n")
