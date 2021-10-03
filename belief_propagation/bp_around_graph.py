@@ -7,7 +7,7 @@ import netwulf as nw
 import pandas as pd
 
 LEADER_NUMBER = 3
-POPULATION = 100
+POPULATION = 1000
 ITERATION = 1
 VISUALISE_AT_END = True
 
@@ -126,7 +126,7 @@ follower_entities = {
 }
 
 nx.set_node_attributes(ba_graph, follower_entities)
-for _ in range(5):
+for _ in range(10):
     ITERATION = iterate_beliefs_from_leaders_outwards(ITERATION)
 
 for node in ba_graph.nodes():
@@ -144,6 +144,7 @@ for node in ba_graph.nodes():
         continue
 
 if VISUALISE_AT_END:
+
     for node in ba_graph.nodes():
         attributes = ba_graph.nodes[node]
         attributes["group"] = attributes["race"]
