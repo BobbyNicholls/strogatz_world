@@ -10,9 +10,9 @@ class Entity:
     def __init__(self, feature_vector, beliefs):
         assert type(beliefs) == np.ndarray, "beliefs must be array"
         self.feature_vector = feature_vector
-        self.beliefs = {ITERATION - 1: beliefs/beliefs.sum()}
+        self.beliefs = {0: beliefs/beliefs.sum()}
 
-    def propagate_belief(self, influencer):
+    def propagate_belief(self, influencer, ITERATION):
         """
         my beliefs in iteration t are a product of my t-1 beliefs and the beliefs of my influencer in t-1, representing
         the fact that in t-1 i was influenced by the influencer node and therefore my beliefs are different in t to what
@@ -23,7 +23,7 @@ class Entity:
         )
         self.beliefs[ITERATION] = self.beliefs[ITERATION]/self.beliefs[ITERATION].sum()
 
-    def iterate_belief(self):
+    def iterate_belief(self, ITERATION):
         self.beliefs[ITERATION] = self.beliefs[ITERATION - 1].copy()
 
 
@@ -39,9 +39,9 @@ if __name__ == "__main__":
         feature_vector=get_random_node_features(), beliefs=np.array([[2, 1], [50, 55]])
     )
     while ITERATION < 100:
-        e1.propagate_belief(influencer=e3)
-        e2.propagate_belief(influencer=e3)
-        e3.iterate_belief()
+        e1.propagate_belief(influencer=e3, ITERATION=ITERATION)
+        e2.propagate_belief(influencer=e3, ITERATION=ITERATION)
+        e3.iterate_belief(ITERATION)
         ITERATION += 1
 
     first_iteration = min(e1.beliefs.keys())
