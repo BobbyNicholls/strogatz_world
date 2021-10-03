@@ -5,7 +5,7 @@ the way beliefs are propagated around social networks by influential members of 
 
 This is for making fictional worlds.
 
-It uses some Graph ML concepts to have intelligent evolving networks that use a form of
+It uses some Graph Machine Learning concepts to have intelligent evolving networks that use a form of
 belief propagation based on the "Loopy belief propagation" algorithm. The networks are
 generated using the watts-strogatz generative graph algorithm.
 
