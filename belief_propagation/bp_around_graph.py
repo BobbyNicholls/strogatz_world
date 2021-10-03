@@ -7,9 +7,10 @@ import netwulf as nw
 import pandas as pd
 
 LEADER_NUMBER = 3
-POPULATION = 1000
+POPULATION = 50000
 ITERATION = 1
-VISUALISE_AT_END = True
+VISUALISE_AT_END = False
+BELIEF_PROP_ITERATIONS = 5
 
 
 def get_leader_nodes(G, leader_number=3):
@@ -66,6 +67,14 @@ def iterate_beliefs_from_leaders_outwards(ITERATION):
     return ITERATION
 
 
+def get_belief_string(beliefs):
+    belief_string = ""
+    for i in range(2):
+        for j in range(2):
+            belief_string += str(round(beliefs[i,j], 2)) + ", "
+    return belief_string[:-2]
+
+
 # this graph results in random associations and therefore isnt as good at accurately modelling a society
 # G = nx.watts_strogatz_graph(n=20, k=5, p=0.2)
 # draw_graph(G, pos_nodes=nx.shell_layout(G), node_size=200, plot_weight=True)
@@ -105,14 +114,20 @@ leader_entities = {
     for leader in leaders
 }
 
+print("\nLEADER BELIEF STRUCTURES:")
+[print(leader_entities[x]['entity'].feature_vector['race'] + ": " + get_belief_string(leader_entities[x]['entity'].beliefs[0])) for x in leader_entities.keys()]
+print("\n==============================================\n")
 nx.set_node_attributes(ba_graph, leader_entities)
 
-leader_races = [ba_graph.nodes[leader]['race'] for leader in leaders]
+leader_races = [ba_graph.nodes[leader]["race"] for leader in leaders]
 avaialble_beliefs = {
-    leader_races[0]: np.array([[70, 20], [5, 4]]),
-    leader_races[1]: np.array([[1, 1], [1, 1]]),
-    leader_races[2]: np.array([[7, 1], [50, 90]]),
+    leader_races[0]: np.array([[0.7, 0.2], [0.06, 0.04]]),
+    leader_races[1]: np.array([[0.25, 0.25], [0.25, 0.25]]),
+    leader_races[2]: np.array([[0.05, 0.007], [0.333, 0.61]]),
 }
+
+print("RACIAL BELIEF STRUCTURES:")
+[print(x + ": " + get_belief_string(avaialble_beliefs[x])) for x in avaialble_beliefs.keys()]
 
 followers = set(ba_graph.nodes()).difference(set(leaders))
 follower_entities = {
@@ -126,37 +141,47 @@ follower_entities = {
 }
 
 nx.set_node_attributes(ba_graph, follower_entities)
-for _ in range(10):
+for _ in range(BELIEF_PROP_ITERATIONS):
     ITERATION = iterate_beliefs_from_leaders_outwards(ITERATION)
 
-for node in ba_graph.nodes():
-    try:
-        print(ba_graph.nodes[node]['race'])
-        print("start:")
-        print(ba_graph.nodes[node]['entity'].beliefs[0])
-        print("end:")
-        print(ba_graph.nodes[node]['entity'].beliefs[1])
-        print(ba_graph.nodes[node]['entity'].beliefs[2])
-        print(ba_graph.nodes[node]['entity'].beliefs[3])
-        print(ba_graph.nodes[node]['entity'].beliefs[4])
-    except KeyError:
-        print("BUGGED")
-        continue
+# for node in ba_graph.nodes():
+#     try:
+#         print(ba_graph.nodes[node]["race"])
+#         print("start:")
+#         print(ba_graph.nodes[node]["entity"].beliefs[0])
+#         print("end:")
+#         print(ba_graph.nodes[node]["entity"].beliefs[1])
+#         print(ba_graph.nodes[node]["entity"].beliefs[2])
+#         print(ba_graph.nodes[node]["entity"].beliefs[3])
+#         print(ba_graph.nodes[node]["entity"].beliefs[4])
+#     except KeyError:
+#         print("BUGGED")
+#         continue
+
 
 if VISUALISE_AT_END:
 
-    for node in ba_graph.nodes():
-        attributes = ba_graph.nodes[node]
-        attributes["group"] = attributes["race"]
-        attributes["entity"] = None
-        nx.set_node_attributes(ba_graph, {node: attributes})
-    #nw.visualize(ba_graph)
+    follower_mapping = {
+            node: f"{node}: {ba_graph.nodes[node]['race']} {ba_graph.nodes[node]['faction']} "
+                  f"{get_belief_string(ba_graph.nodes[node]['entity'].beliefs[BELIEF_PROP_ITERATIONS])}"
+            for node in set(ba_graph.nodes()).difference(set(leaders))
+        }
+
+    leader_mapping = {
+            node: f"LEADER{node}: {ba_graph.nodes[node]['race']} {ba_graph.nodes[node]['faction']} "
+                  f"{get_belief_string(ba_graph.nodes[node]['entity'].beliefs[BELIEF_PROP_ITERATIONS])}"
+            for node in leaders
+        }
 
     ba_graph = nx.relabel_nodes(
         ba_graph,
-        {
-            node: f"{ba_graph.nodes[node]['race']}: {ba_graph.nodes[node]['faction']} {node}"
-            for node in ba_graph.nodes()
-        },
+        {**follower_mapping, **leader_mapping},
     )
+
+    for node in ba_graph.nodes():
+        attributes = ba_graph.nodes[node]
+        attributes["group"] = attributes["race"] + attributes["faction"]
+        attributes["entity"] = None
+        nx.set_node_attributes(ba_graph, {node: attributes})
+
     nw.visualize(ba_graph)
