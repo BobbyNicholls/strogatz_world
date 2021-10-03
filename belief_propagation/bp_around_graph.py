@@ -9,6 +9,7 @@ import pandas as pd
 LEADER_NUMBER = 3
 POPULATION = 100
 ITERATION = 1
+VISUALISE_AT_END = True
 
 
 def get_leader_nodes(G, leader_number=3):
@@ -142,7 +143,7 @@ for node in ba_graph.nodes():
         print("BUGGED")
         continue
 
-if False:
+if VISUALISE_AT_END:
     for node in ba_graph.nodes():
         attributes = ba_graph.nodes[node]
         attributes["group"] = attributes["race"]
