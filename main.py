@@ -2,7 +2,9 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import netwulf as nw
 import pandas as pd
+
 from utils import get_random_node_features
+# from clique_generation import make_embedded_cliques
 
 LEADER_NUMBER = 3
 POPULATION = 30
@@ -110,4 +112,7 @@ if __name__ == "__main__":
             for node in ba_graph.nodes()
         },
     )
+
+    ba_graph = make_embedded_cliques(ba_graph)
+
     nw.visualize(ba_graph)
