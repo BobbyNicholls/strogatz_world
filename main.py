@@ -9,9 +9,10 @@ from utils import get_random_node_features
 
 LEADER_NUMBER = 5
 POPULATION = 300
-NR_OF_CLIQUES = 50
+NR_OF_CLIQUES = 10
 MIN_CLIQUE_SIZE = 2
 MAX_CLIQUE_SIZE = 6
+BELIEF_PROP_ITERATIONS = 8
 
 
 def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
@@ -88,7 +89,7 @@ if __name__ == "__main__":
     # accurately represents reality in social networks
     ba_graph = nx.extended_barabasi_albert_graph(POPULATION, 1, 0.02, 0)
 
-    print(all([type(x)==int for x in ba_graph.nodes()]))
+    print(all([type(x) == int for x in ba_graph.nodes()]))
 
     # nw.visualize(ba_graph)
 
@@ -112,14 +113,22 @@ if __name__ == "__main__":
         nx.set_node_attributes(ba_graph, {node: attributes})
 
     ba_graph = make_embedded_cliques(
-        ba_graph, nr_of_cliques=NR_OF_CLIQUES, min_clique_size=MIN_CLIQUE_SIZE, max_clique_size=MAX_CLIQUE_SIZE
+        ba_graph,
+        nr_of_cliques=NR_OF_CLIQUES,
+        min_clique_size=MIN_CLIQUE_SIZE,
+        max_clique_size=MAX_CLIQUE_SIZE,
     )
 
     print(all([type(x) == int for x in ba_graph.nodes()]))
 
     # nw.visualize(ba_graph)
 
-    ba_graph = initialise_beliefs_and_propagate(ba_graph, leaders, belief_prop_iterations=3)
+    ba_graph = initialise_beliefs_and_propagate(
+        ba_graph,
+        leaders,
+        visualise_at_end=True,
+        belief_prop_iterations=BELIEF_PROP_ITERATIONS,
+    )
 
     ba_graph = nx.relabel_nodes(
         ba_graph,
@@ -129,4 +138,6 @@ if __name__ == "__main__":
         },
     )
 
-    # nw.visualize(ba_graph)
+    print(1)
+
+    nw.visualize(ba_graph)
