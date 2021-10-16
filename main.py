@@ -6,8 +6,11 @@ import pandas as pd
 from utils import get_random_node_features
 from clique_generation import make_embedded_cliques
 
-LEADER_NUMBER = 3
-POPULATION = 30
+LEADER_NUMBER = 5
+POPULATION = 300
+NR_OF_CLIQUES = 15
+MIN_CLIQUE_SIZE = 3
+MAX_CLIQUE_SIZE = 10
 
 
 def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
@@ -83,7 +86,9 @@ if __name__ == "__main__":
     # result of their centrality, exhibiting a "power-law distribution" for connectivity between nodes that more
     # accurately represents reality in social networks
     ba_graph = nx.extended_barabasi_albert_graph(POPULATION, 1, 0.02, 0)
-    draw_graph(ba_graph, pos_nodes=nx.spring_layout(ba_graph), node_size=200, plot_weight=True)
+    draw_graph(
+        ba_graph, pos_nodes=nx.spring_layout(ba_graph), node_size=200, plot_weight=True
+    )
     # nw.visualize(ba_graph)
 
     leaders = get_leader_nodes(ba_graph, leader_number=LEADER_NUMBER)
@@ -113,6 +118,8 @@ if __name__ == "__main__":
         },
     )
 
-    ba_graph = make_embedded_cliques(ba_graph)
+    ba_graph = make_embedded_cliques(
+        ba_graph, nr_of_cliques=NR_OF_CLIQUES, min_clique_size=MIN_CLIQUE_SIZE, max_clique_size=MAX_CLIQUE_SIZE
+    )
 
     nw.visualize(ba_graph)
