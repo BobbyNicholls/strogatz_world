@@ -5,7 +5,7 @@ import pandas as pd
 from utils import get_random_node_features
 
 LEADER_NUMBER = 3
-POPULATION = 100
+POPULATION = 30
 
 
 def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
@@ -80,8 +80,8 @@ if __name__ == "__main__":
     # attached to already central nodes. This results in "influencer nodes" which become increasingly central as a
     # result of their centrality, exhibiting a "power-law distribution" for connectivity between nodes that more
     # accurately represents reality in social networks
-    ba_graph = nx.extended_barabasi_albert_graph(POPULATION, 1, 0, 0)
-
+    ba_graph = nx.extended_barabasi_albert_graph(POPULATION, 1, 0.02, 0)
+    draw_graph(ba_graph, pos_nodes=nx.spring_layout(ba_graph), node_size=200, plot_weight=True)
     # nw.visualize(ba_graph)
 
     leaders = get_leader_nodes(ba_graph, leader_number=LEADER_NUMBER)
