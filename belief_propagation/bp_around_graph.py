@@ -157,13 +157,9 @@ def initialise_beliefs_and_propagate(G, leaders, belief_prop_iterations, visuali
     for node in G_copy.nodes():
         try:
             print(G_copy.nodes[node]["race"])
-            print("start:")
-            print(G_copy.nodes[node]["entity"].beliefs[0])
-            print("end:")
-            print(G_copy.nodes[node]["entity"].beliefs[1])
-            print(G_copy.nodes[node]["entity"].beliefs[2])
-            print(G_copy.nodes[node]["entity"].beliefs[3])
-            print(G_copy.nodes[node]["entity"].beliefs[4])
+            print("Belief progression:")
+            for key in G_copy.nodes[node]["entity"].beliefs.keys():
+                print(G_copy.nodes[node]["entity"].beliefs[key])
         except KeyError:
             print("BUGGED")
 
