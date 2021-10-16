@@ -1,17 +1,45 @@
 from belief_propagation.bp_entity import Entity
 from utils import get_random_node_features
 
+import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import netwulf as nw
 import pandas as pd
 
-from main import draw_graph, get_leader_nodes
-
 LEADER_NUMBER = 7
 POPULATION = 50
 VISUALISE_AT_END = True
 BELIEF_PROP_ITERATIONS = 5
+
+
+def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
+    nx.draw(
+        G,
+        pos_nodes,
+        with_labels=False,
+        node_size=node_size,
+        edge_color="gray",
+        arrowsize=30,
+    )
+
+    pos_attrs = {}
+    for node, coords in pos_nodes.items():
+        pos_attrs[node] = (coords[0], coords[1] + 0.08)
+
+    nx.draw_networkx_labels(G, pos_attrs, font_family="serif", font_size=20)
+
+    if plot_weight:
+        pos_attrs = {}
+        for node, coords in pos_nodes.items():
+            pos_attrs[node] = (coords[0], coords[1] + 0.08)
+
+        nx.draw_networkx_labels(G, pos_attrs, font_family="serif", font_size=20)
+
+    plt.axis("off")
+    axis = plt.gca()
+    axis.set_xlim([1.2 * x for x in axis.get_xlim()])
+    axis.set_ylim([1.2 * y for y in axis.get_ylim()])
 
 
 def propagate_node_attributes():
@@ -52,7 +80,7 @@ def iterate_beliefs_from_leaders_outwards(F, leaders, iteration):
     for leader in leaders_copy:
         F_copy.nodes[leader]["entity"].iterate_belief(iteration)
     iteration += 1
-    return iteration
+    return F_copy, iteration
 
 
 def get_belief_string(beliefs):
@@ -138,7 +166,6 @@ def initialise_beliefs_and_propagate(G, leaders, belief_prop_iterations, visuali
             print(G_copy.nodes[node]["entity"].beliefs[4])
         except KeyError:
             print("BUGGED")
-            continue
 
     if visualise_at_end:
 
@@ -176,9 +203,6 @@ if __name__ == "__main__":
     # G = nx.watts_strogatz_graph(n=20, k=5, p=0.2)
     # ba_graph = nx.extended_barabasi_albert_graph(POPULATION, 1, 0, 0)
     ba_graph = nx.extended_barabasi_albert_graph(POPULATION, 1, 0.02, 0)
-    draw_graph(
-        ba_graph, pos_nodes=nx.spring_layout(ba_graph), node_size=200, plot_weight=True
-    )
 
     # nw.visualize(ba_graph)
 

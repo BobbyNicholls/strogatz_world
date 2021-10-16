@@ -87,9 +87,9 @@ if __name__ == "__main__":
     # result of their centrality, exhibiting a "power-law distribution" for connectivity between nodes that more
     # accurately represents reality in social networks
     ba_graph = nx.extended_barabasi_albert_graph(POPULATION, 1, 0.02, 0)
-    draw_graph(
-        ba_graph, pos_nodes=nx.spring_layout(ba_graph), node_size=200, plot_weight=True
-    )
+
+    print(all([type(x)==int for x in ba_graph.nodes()]))
+
     # nw.visualize(ba_graph)
 
     leaders = get_leader_nodes(ba_graph, leader_number=LEADER_NUMBER)
@@ -111,6 +111,16 @@ if __name__ == "__main__":
         attributes["group"] = attributes["race"]
         nx.set_node_attributes(ba_graph, {node: attributes})
 
+    ba_graph = make_embedded_cliques(
+        ba_graph, nr_of_cliques=NR_OF_CLIQUES, min_clique_size=MIN_CLIQUE_SIZE, max_clique_size=MAX_CLIQUE_SIZE
+    )
+
+    print(all([type(x) == int for x in ba_graph.nodes()]))
+
+    # nw.visualize(ba_graph)
+
+    ba_graph = initialise_beliefs_and_propagate(ba_graph, leaders, belief_prop_iterations=3)
+
     ba_graph = nx.relabel_nodes(
         ba_graph,
         {
@@ -119,10 +129,4 @@ if __name__ == "__main__":
         },
     )
 
-    ba_graph = make_embedded_cliques(
-        ba_graph, nr_of_cliques=NR_OF_CLIQUES, min_clique_size=MIN_CLIQUE_SIZE, max_clique_size=MAX_CLIQUE_SIZE
-    )
-
-    nw.visualize(ba_graph)
-
-    initialise_beliefs_and_propagate()
+    # nw.visualize(ba_graph)

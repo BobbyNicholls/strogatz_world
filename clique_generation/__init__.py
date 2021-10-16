@@ -13,9 +13,9 @@ def make_embedded_cliques(G, nr_of_cliques=4, min_clique_size=3, max_clique_size
     for clique_seed in clique_seeds:
         clique_size = np.random.choice(range(min_clique_size, max_clique_size + 1))
         clique_nodes = [
-            x[0]
+            int(x[0])
             for x in ba_graph_node_embeddings.most_similar(
-                str(clique_seed), topn=clique_size
+                clique_seed, topn=clique_size
             )
         ] + [clique_seed]
 
