@@ -6,29 +6,12 @@ import numpy as np
 import netwulf as nw
 import pandas as pd
 
-from main import draw_graph
+from main import draw_graph, get_leader_nodes
 
 LEADER_NUMBER = 7
 POPULATION = 50
-ITERATION = 1
 VISUALISE_AT_END = True
 BELIEF_PROP_ITERATIONS = 5
-
-
-def get_leader_nodes(G, leader_number=3):
-    """
-    get top X leaders by degree centrality
-    """
-    # TODO: find way to determine number of leaders dynamically
-    return (
-        pd.DataFrame(
-            nx.centrality.degree_centrality(G).items(),
-            columns=["node", "centrality"],
-        )
-        .sort_values("centrality", ascending=False)["node"]
-        .iloc[:leader_number]
-        .values
-    )
 
 
 def propagate_node_attributes():
@@ -50,24 +33,26 @@ def propagate_node_attributes():
     nx.set_node_attributes(ba_graph, node_attribute_assignment_dict)
 
 
-def iterate_beliefs_from_leaders_outwards(ITERATION):
-    egos = set(leaders)
+def iterate_beliefs_from_leaders_outwards(F, leaders, iteration):
+    F_copy = F.copy()
+    leaders_copy = leaders.copy()
+    egos = set(leaders_copy)
     propagated_nodes = egos.copy()
     while len(egos) > 0:
         next_iteration_egos = set()
         for ego in egos:
-            followers = set(ba_graph.neighbors(ego)).difference(propagated_nodes)
+            followers = set(F_copy.neighbors(ego)).difference(propagated_nodes)
             next_iteration_egos = next_iteration_egos.union(followers)
             for follower in followers:
-                ba_graph.nodes[follower]["entity"].propagate_belief(
-                    influencer=ba_graph.nodes[ego]["entity"], ITERATION=ITERATION
+                F_copy.nodes[follower]["entity"].propagate_belief(
+                    influencer=F_copy.nodes[ego]["entity"], ITERATION=iteration
                 )
             propagated_nodes = propagated_nodes.union(followers)
         egos = next_iteration_egos.copy()
-    for leader in leaders:
-        ba_graph.nodes[leader]["entity"].iterate_belief(ITERATION)
-    ITERATION += 1
-    return ITERATION
+    for leader in leaders_copy:
+        F_copy.nodes[leader]["entity"].iterate_belief(iteration)
+    iteration += 1
+    return iteration
 
 
 def get_belief_string(beliefs):
@@ -78,12 +63,122 @@ def get_belief_string(beliefs):
     return belief_string[:-2]
 
 
+def initialise_beliefs_and_propagate(G, leaders, belief_prop_iterations, visualise_at_end=False):
+    G_copy = G.copy()
+    iteration = 1
+    print(belief_prop_iterations)
+    leader_entities = {
+        leader: {
+            "entity": Entity(
+                feature_vector=G_copy.nodes[leader],
+                beliefs=np.array(
+                    [
+                        [np.random.randint(0, 50), np.random.randint(0, 50)],
+                        [np.random.randint(0, 50), np.random.randint(0, 50)],
+                    ]
+                ),
+            )
+        }
+        for leader in leaders
+    }
+
+    print("\nLEADER BELIEF STRUCTURES:")
+    [
+        print(
+            leader_entities[x]["entity"].feature_vector["race"]
+            + ": "
+            + get_belief_string(leader_entities[x]["entity"].beliefs[0])
+        )
+        for x in leader_entities.keys()
+    ]
+    print("\n==============================================\n")
+    nx.set_node_attributes(G_copy, leader_entities)
+
+    leader_races = set([G_copy.nodes[leader]["race"] for leader in leaders])
+    avaialble_beliefs = {
+        race: np.array(
+            [
+                [np.random.randint(0, 50), np.random.randint(0, 50)],
+                [np.random.randint(0, 50), np.random.randint(0, 50)],
+            ]
+        )
+        for race in leader_races
+    }
+
+    print("RACIAL BELIEF STRUCTURES:")
+    [
+        print(x + ": " + get_belief_string(avaialble_beliefs[x]))
+        for x in avaialble_beliefs.keys()
+    ]
+
+    followers = set(G_copy.nodes()).difference(set(leaders))
+    follower_entities = {
+        follower: {
+            "entity": Entity(
+                feature_vector=G_copy.nodes[follower],
+                beliefs=avaialble_beliefs[G_copy.nodes[follower]["race"]],
+            )
+        }
+        for follower in followers
+    }
+
+    nx.set_node_attributes(G_copy, follower_entities)
+    for _ in range(belief_prop_iterations):
+        G_copy, iteration = iterate_beliefs_from_leaders_outwards(G_copy, leaders, iteration)
+
+    for node in G_copy.nodes():
+        try:
+            print(G_copy.nodes[node]["race"])
+            print("start:")
+            print(G_copy.nodes[node]["entity"].beliefs[0])
+            print("end:")
+            print(G_copy.nodes[node]["entity"].beliefs[1])
+            print(G_copy.nodes[node]["entity"].beliefs[2])
+            print(G_copy.nodes[node]["entity"].beliefs[3])
+            print(G_copy.nodes[node]["entity"].beliefs[4])
+        except KeyError:
+            print("BUGGED")
+            continue
+
+    if visualise_at_end:
+
+        follower_mapping = {
+            node: f"{node}: {G_copy.nodes[node]['race']} {G_copy.nodes[node]['faction']} "
+            f"{get_belief_string(G_copy.nodes[node]['entity'].beliefs[belief_prop_iterations])}"
+            for node in set(G_copy.nodes()).difference(set(leaders))
+        }
+
+        leader_mapping = {
+            node: f"LEADER{node}: {G_copy.nodes[node]['race']} {G_copy.nodes[node]['faction']} "
+            f"{get_belief_string(G_copy.nodes[node]['entity'].beliefs[belief_prop_iterations])}"
+            for node in leaders
+        }
+
+        G_copy = nx.relabel_nodes(
+            G_copy,
+            {**follower_mapping, **leader_mapping},
+        )
+
+        for node in G_copy.nodes():
+            attributes = G_copy.nodes[node]
+            attributes["group"] = attributes["race"] + attributes["faction"]
+            attributes["entity"] = None
+            nx.set_node_attributes(G_copy, {node: attributes})
+
+        nw.visualize(G_copy)
+
+    return G_copy
+
+
 if __name__ == "__main__":
+    ITERATION = 1
     # this graph results in random associations and therefore isnt as good at accurately modelling a society
     # G = nx.watts_strogatz_graph(n=20, k=5, p=0.2)
     # ba_graph = nx.extended_barabasi_albert_graph(POPULATION, 1, 0, 0)
     ba_graph = nx.extended_barabasi_albert_graph(POPULATION, 1, 0.02, 0)
-    draw_graph(ba_graph, pos_nodes=nx.spring_layout(ba_graph), node_size=200, plot_weight=True)
+    draw_graph(
+        ba_graph, pos_nodes=nx.spring_layout(ba_graph), node_size=200, plot_weight=True
+    )
 
     # nw.visualize(ba_graph)
 
@@ -160,7 +255,7 @@ if __name__ == "__main__":
 
     nx.set_node_attributes(ba_graph, follower_entities)
     for _ in range(BELIEF_PROP_ITERATIONS):
-        ITERATION = iterate_beliefs_from_leaders_outwards(ITERATION)
+        ba_graph, ITERATION = iterate_beliefs_from_leaders_outwards(ba_graph, ITERATION)
 
     for node in ba_graph.nodes():
         try:
@@ -175,7 +270,6 @@ if __name__ == "__main__":
         except KeyError:
             print("BUGGED")
             continue
-
 
     if VISUALISE_AT_END:
 

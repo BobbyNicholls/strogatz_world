@@ -3,14 +3,15 @@ import networkx as nx
 import netwulf as nw
 import pandas as pd
 
-from utils import get_random_node_features
+from belief_propagation.bp_around_graph import initialise_beliefs_and_propagate
 from clique_generation import make_embedded_cliques
+from utils import get_random_node_features
 
 LEADER_NUMBER = 5
 POPULATION = 300
-NR_OF_CLIQUES = 15
-MIN_CLIQUE_SIZE = 3
-MAX_CLIQUE_SIZE = 10
+NR_OF_CLIQUES = 50
+MIN_CLIQUE_SIZE = 2
+MAX_CLIQUE_SIZE = 6
 
 
 def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
@@ -123,3 +124,5 @@ if __name__ == "__main__":
     )
 
     nw.visualize(ba_graph)
+
+    initialise_beliefs_and_propagate()
