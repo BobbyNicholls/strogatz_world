@@ -10,9 +10,6 @@ import networkx as nx
 from node2vec import Node2Vec
 import numpy as np
 
-from belief_propagation.bp_around_graph import get_leader_nodes
-from main import draw_graph
-
 
 def make_node2vec_node_embeddings(G):
     G_copy = G.copy()
@@ -36,9 +33,6 @@ if __name__ == "__main__":
     MIN_CLIQUE_SIZE = 3
     MAX_CLIQUE_SIZE = 6
     ba_graph = nx.extended_barabasi_albert_graph(POPULATION, 1, 0.02, 0)
-    draw_graph(
-        ba_graph, pos_nodes=nx.spring_layout(ba_graph), node_size=200, plot_weight=True
-    )
     #get_leader_nodes(ba_graph, 2)
     ba_graph_node_embeddings = make_node2vec_node_embeddings(ba_graph)
     # ba_graph_node_embeddings.similarity("0", "17")
@@ -57,7 +51,3 @@ if __name__ == "__main__":
         ] + [clique_seed]
 
         ba_graph.add_edges_from(itertools.combinations(clique_nodes, 2))
-
-    draw_graph(
-        ba_graph, pos_nodes=nx.spring_layout(ba_graph), node_size=200, plot_weight=True
-    )

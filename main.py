@@ -4,7 +4,7 @@ import netwulf as nw
 import pandas as pd
 
 from utils import get_random_node_features
-# from clique_generation import make_embedded_cliques
+from clique_generation import make_embedded_cliques
 
 LEADER_NUMBER = 3
 POPULATION = 30
