@@ -91,7 +91,9 @@ def get_belief_string(beliefs):
     return belief_string[:-2]
 
 
-def initialise_beliefs_and_propagate(G, leaders, belief_prop_iterations, visualise_at_end=False):
+def initialise_beliefs_and_propagate(
+    G, leaders, belief_prop_iterations, visualise_at_end=False
+):
     G_copy = G.copy()
     iteration = 1
     print(belief_prop_iterations)
@@ -152,7 +154,9 @@ def initialise_beliefs_and_propagate(G, leaders, belief_prop_iterations, visuali
 
     nx.set_node_attributes(G_copy, follower_entities)
     for _ in range(belief_prop_iterations):
-        G_copy, iteration = iterate_beliefs_from_leaders_outwards(G_copy, leaders, iteration)
+        G_copy, iteration = iterate_beliefs_from_leaders_outwards(
+            G_copy, leaders, iteration
+        )
 
     for node in G_copy.nodes():
         try:

@@ -10,7 +10,7 @@ class Entity:
     def __init__(self, feature_vector, beliefs):
         assert type(beliefs) == np.ndarray, "beliefs must be array"
         self.feature_vector = feature_vector
-        self.beliefs = {0: beliefs/beliefs.sum()}
+        self.beliefs = {0: beliefs / beliefs.sum()}
 
     def propagate_belief(self, influencer, ITERATION):
         """
@@ -21,7 +21,9 @@ class Entity:
         self.beliefs[ITERATION] = np.dot(
             influencer.beliefs[ITERATION - 1], self.beliefs[ITERATION - 1]
         )
-        self.beliefs[ITERATION] = self.beliefs[ITERATION]/self.beliefs[ITERATION].sum()
+        self.beliefs[ITERATION] = (
+            self.beliefs[ITERATION] / self.beliefs[ITERATION].sum()
+        )
 
     def iterate_belief(self, ITERATION):
         self.beliefs[ITERATION] = self.beliefs[ITERATION - 1].copy()
@@ -47,10 +49,18 @@ if __name__ == "__main__":
     first_iteration = min(e1.beliefs.keys())
     last_iteration = max(e1.beliefs.keys())
     print(f"First iteration: {e1.beliefs[first_iteration]}")
-    print(f"First iteration: {e1.beliefs[first_iteration][0].sum() / e1.beliefs[first_iteration][1].sum()}")
+    print(
+        f"First iteration: {e1.beliefs[first_iteration][0].sum() / e1.beliefs[first_iteration][1].sum()}"
+    )
     print(f"Last iteration: {e1.beliefs[last_iteration]}")
-    print(f"Last iteration: {e1.beliefs[last_iteration][0].sum() / e1.beliefs[last_iteration][1].sum()}")
+    print(
+        f"Last iteration: {e1.beliefs[last_iteration][0].sum() / e1.beliefs[last_iteration][1].sum()}"
+    )
     print(f"First iteration: {e2.beliefs[first_iteration]}")
-    print(f"First iteration: {e2.beliefs[first_iteration][0].sum() / e2.beliefs[first_iteration][1].sum()}")
+    print(
+        f"First iteration: {e2.beliefs[first_iteration][0].sum() / e2.beliefs[first_iteration][1].sum()}"
+    )
     print(f"Last iteration: {e2.beliefs[last_iteration]}")
-    print(f"Last iteration: {e2.beliefs[last_iteration][0].sum() / e2.beliefs[last_iteration][1].sum()}")
+    print(
+        f"Last iteration: {e2.beliefs[last_iteration][0].sum() / e2.beliefs[last_iteration][1].sum()}"
+    )

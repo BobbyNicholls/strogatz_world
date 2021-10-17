@@ -11,10 +11,7 @@ def append_vector_to_embeddings(embeddings, new_vector=np.array([1, 1])):
 
     keys = embeddings.index_to_key
     node_emb_new = Word2VecKeyedVectors(len(embeddings[keys[0]]) + len(new_vector))
-    new_vectors = [
-        np.concatenate((embeddings[key], new_vector))
-        for key in keys
-    ]
+    new_vectors = [np.concatenate((embeddings[key], new_vector)) for key in keys]
     node_emb_new.add_vectors(keys, new_vectors)
     return node_emb_new
 
@@ -48,6 +45,8 @@ if __name__ == "__main__":
         max_clique_size=6,
     )
 
-    new_embeddings = append_vector_to_embeddings(node_embeddings, new_vector=np.array([4, 3]))
+    new_embeddings = append_vector_to_embeddings(
+        node_embeddings, new_vector=np.array([4, 3])
+    )
 
-    new_embeddings.most_similar('1')
+    new_embeddings.most_similar("1")

@@ -33,7 +33,7 @@ if __name__ == "__main__":
     MIN_CLIQUE_SIZE = 3
     MAX_CLIQUE_SIZE = 6
     ba_graph = nx.extended_barabasi_albert_graph(POPULATION, 1, 0.02, 0)
-    #get_leader_nodes(ba_graph, 2)
+    # get_leader_nodes(ba_graph, 2)
     ba_graph_node_embeddings = make_node2vec_node_embeddings(ba_graph)
     # ba_graph_node_embeddings.similarity("0", "17")
     # ba_graph_node_embeddings.similarity("0", "23")
