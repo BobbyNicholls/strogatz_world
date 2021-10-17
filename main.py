@@ -19,7 +19,7 @@ from clique_generation import make_embedded_cliques
 from utils import get_random_node_features, get_belief_dataframe
 
 LEADER_NUMBER = 10
-POPULATION = 200
+POPULATION = 150
 NR_OF_CLIQUES = 30
 MIN_CLIQUE_SIZE = 3
 MAX_CLIQUE_SIZE = 4
@@ -71,6 +71,10 @@ def get_leader_nodes(G, leader_number=3):
     )
 
 
+def get_leader_node_attributes(leader_nodes):
+    return {leader_node: get_random_node_features() for leader_node in leader_nodes}
+
+
 def propagate_leader_node_attributes(ba_graph):
     node_attribute_assignment_dict = {}
     egos = set(leaders)
@@ -104,14 +108,8 @@ if __name__ == "__main__":
     # nw.visualize(ba_graph)
 
     leaders = get_leader_nodes(ba_graph, leader_number=LEADER_NUMBER)
-    leader_node_attributes = {
-        node: features
-        for node, features in zip(
-            leaders, [get_random_node_features() for _ in range(len(leaders))]
-        )
-    }
+    leader_node_attributes = get_leader_node_attributes(leaders)
     nx.set_node_attributes(ba_graph, leader_node_attributes)
-
     ba_graph = propagate_leader_node_attributes(ba_graph)
 
     for node in ba_graph.nodes():
@@ -126,14 +124,12 @@ if __name__ == "__main__":
         max_clique_size=MAX_CLIQUE_SIZE,
     )
 
-    print(all([type(x) == int for x in ba_graph.nodes()]))
-
     # nw.visualize(ba_graph)
 
     ba_graph = initialise_beliefs_and_propagate(
         ba_graph,
         leaders,
-        visualise_at_end=True,
+        visualise_at_end=False,
         belief_prop_iterations=BELIEF_PROP_ITERATIONS,
     )
 
@@ -145,9 +141,12 @@ if __name__ == "__main__":
         },
     )
 
+    for node in ba_graph.nodes():
+        ba_graph.nodes[node]["entity"] = None
+
     print(1)
 
-    # nw.visualize(ba_graph)
+    nw.visualize(ba_graph)
 
     belief_df = get_belief_dataframe(ba_graph)
     print(belief_df.head(30))
