@@ -22,11 +22,12 @@ from clique_generation import make_embedded_cliques
 from utils import get_random_node_features, get_belief_dataframe
 
 LEADER_NUMBER = 10
-POPULATION = 150
-NR_OF_CLIQUES = 30
+POPULATION = 400
+NR_OF_CLIQUES = 50
 MIN_CLIQUE_SIZE = 3
 MAX_CLIQUE_SIZE = 4
-BELIEF_PROP_ITERATIONS = 2
+BELIEF_PROP_ITERATIONS = 5
+JOIN_ON_BELIEFS = False
 
 
 def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
@@ -134,7 +135,7 @@ if __name__ == "__main__":
         nr_of_cliques=NR_OF_CLIQUES,
         min_clique_size=MIN_CLIQUE_SIZE,
         max_clique_size=MAX_CLIQUE_SIZE,
-        join_on_beliefs=True,
+        join_on_beliefs=JOIN_ON_BELIEFS,
     )
 
     ba_graph = propagate_beliefs(
@@ -143,10 +144,12 @@ if __name__ == "__main__":
         belief_prop_iterations=BELIEF_PROP_ITERATIONS,
     )
 
+    iteration = max(ba_graph.nodes[list(ba_graph.nodes())[0]]['entity'].beliefs.keys())
     ba_graph = nx.relabel_nodes(
         ba_graph,
         {
-            node: f"{ba_graph.nodes[node]['race']}: {ba_graph.nodes[node]['faction']} {node}"
+            node: f"{ba_graph.nodes[node]['race']}: {ba_graph.nodes[node]['faction']} {node} "
+                  f"{[round(y, 2) for x in ba_graph.nodes[node]['entity'].beliefs[iteration] for y in x]}"
             for node in ba_graph.nodes()
         },
     )

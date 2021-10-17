@@ -158,14 +158,14 @@ def initialise_and_propagate_beliefs(
             G_copy, leaders, iteration
         )
 
-    for node in G_copy.nodes():
-        try:
-            print(G_copy.nodes[node]["race"])
-            print("Belief progression:")
-            for key in G_copy.nodes[node]["entity"].beliefs.keys():
-                print(G_copy.nodes[node]["entity"].beliefs[key])
-        except KeyError:
-            print("BUGGED")
+    # for node in G_copy.nodes():
+    #     try:
+    #         print(G_copy.nodes[node]["race"])
+    #         print("Belief progression:")
+    #         for key in G_copy.nodes[node]["entity"].beliefs.keys():
+    #             print(G_copy.nodes[node]["entity"].beliefs[key])
+    #     except KeyError:
+    #         print("BUGGED")
 
     if visualise_at_end:
 
