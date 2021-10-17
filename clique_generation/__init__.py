@@ -49,3 +49,5 @@ if __name__ == "__main__":
     )
 
     new_embeddings = append_vector_to_embeddings(node_embeddings, new_vector=np.array([4, 3]))
+
+    new_embeddings.most_similar('1')

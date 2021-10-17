@@ -100,8 +100,6 @@ if __name__ == "__main__":
     # accurately represents reality in social networks
     ba_graph = nx.extended_barabasi_albert_graph(POPULATION, 1, 0.01, 0)
 
-    print(all([type(x) == int for x in ba_graph.nodes()]))
-
     # nw.visualize(ba_graph)
 
     leaders = get_leader_nodes(ba_graph, leader_number=LEADER_NUMBER)
