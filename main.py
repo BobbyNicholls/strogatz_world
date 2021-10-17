@@ -71,7 +71,7 @@ def get_leader_nodes(G, leader_number=3):
     )
 
 
-def propagate_node_attributes():
+def propagate_leader_node_attributes(ba_graph):
     node_attribute_assignment_dict = {}
     egos = set(leaders)
     assigned_nodes = egos.copy()
@@ -87,6 +87,7 @@ def propagate_node_attributes():
             assigned_nodes = assigned_nodes.union(followers)
         egos = next_iteration_egos.copy()
     nx.set_node_attributes(ba_graph, node_attribute_assignment_dict)
+    return ba_graph
 
 
 # this graph results in random associations and therefore isnt as good at accurately modelling a society
@@ -111,10 +112,7 @@ if __name__ == "__main__":
     }
     nx.set_node_attributes(ba_graph, leader_node_attributes)
 
-    start = pd.to_datetime("now")
-    propagate_node_attributes()
-    end = pd.to_datetime("now")
-    print(end - start)
+    ba_graph = propagate_leader_node_attributes(ba_graph)
 
     for node in ba_graph.nodes():
         attributes = ba_graph.nodes[node]
