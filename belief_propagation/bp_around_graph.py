@@ -91,7 +91,7 @@ def get_belief_string(beliefs):
     return belief_string[:-2]
 
 
-def initialise_beliefs_and_propagate(
+def initialise_and_propagate_beliefs(
     G, leaders, belief_prop_iterations, visualise_at_end=False
 ):
     G_copy = G.copy()
@@ -194,6 +194,16 @@ def initialise_beliefs_and_propagate(
 
         nw.visualize(G_copy)
 
+    return G_copy
+
+
+def propagate_beliefs(G, leaders, belief_prop_iterations):
+    G_copy = G.copy()
+    iteration = max(G_copy.nodes[list(G_copy.nodes())[0]]['entity'].beliefs.keys()) + 1
+    for _ in range(belief_prop_iterations):
+        G_copy, iteration = iterate_beliefs_from_leaders_outwards(
+            G_copy, leaders, iteration
+        )
     return G_copy
 
 

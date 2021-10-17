@@ -14,7 +14,10 @@ import networkx as nx
 import netwulf as nw
 import pandas as pd
 
-from belief_propagation.bp_around_graph import initialise_beliefs_and_propagate
+from belief_propagation.bp_around_graph import (
+    initialise_and_propagate_beliefs,
+    propagate_beliefs,
+)
 from clique_generation import make_embedded_cliques
 from utils import get_random_node_features, get_belief_dataframe
 
@@ -117,6 +120,15 @@ if __name__ == "__main__":
         attributes["group"] = attributes["race"]
         nx.set_node_attributes(ba_graph, {node: attributes})
 
+    # nw.visualize(ba_graph)
+
+    ba_graph = initialise_and_propagate_beliefs(
+        ba_graph,
+        leaders,
+        visualise_at_end=False,
+        belief_prop_iterations=1,
+    )
+
     ba_graph = make_embedded_cliques(
         ba_graph,
         nr_of_cliques=NR_OF_CLIQUES,
@@ -124,12 +136,9 @@ if __name__ == "__main__":
         max_clique_size=MAX_CLIQUE_SIZE,
     )
 
-    # nw.visualize(ba_graph)
-
-    ba_graph = initialise_beliefs_and_propagate(
+    ba_graph = propagate_beliefs(
         ba_graph,
         leaders,
-        visualise_at_end=False,
         belief_prop_iterations=BELIEF_PROP_ITERATIONS,
     )
 
