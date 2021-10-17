@@ -134,6 +134,7 @@ if __name__ == "__main__":
         nr_of_cliques=NR_OF_CLIQUES,
         min_clique_size=MIN_CLIQUE_SIZE,
         max_clique_size=MAX_CLIQUE_SIZE,
+        join_on_beliefs=True,
     )
 
     ba_graph = propagate_beliefs(

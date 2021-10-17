@@ -6,7 +6,8 @@ import numpy as np
 from node_embedding import make_node2vec_node_embeddings
 
 
-def append_vector_to_embeddings(embeddings, new_vector=np.array([1, 1])):
+def append_belief_vector_to_embeddings(H, embeddings, new_vector=np.array([1, 1])):
+    H_copy = H.copy()
     from gensim.models.keyedvectors import Word2VecKeyedVectors
 
     keys = embeddings.index_to_key
@@ -16,17 +17,42 @@ def append_vector_to_embeddings(embeddings, new_vector=np.array([1, 1])):
     return node_emb_new
 
 
-def make_embedded_cliques(G, nr_of_cliques=4, min_clique_size=3, max_clique_size=6):
+def make_embedded_cliques(
+    G, nr_of_cliques=4, min_clique_size=3, max_clique_size=6, join_on_beliefs=False
+):
     G_copy = G.copy()
 
     ba_graph_node_embeddings = make_node2vec_node_embeddings(G_copy)
+    if join_on_beliefs:
+        print("cliques will be generated on beliefs...")
+        from gensim.models.keyedvectors import Word2VecKeyedVectors
+
+        nodes = list(G_copy.nodes())
+        iteration = max(G_copy.nodes[nodes[0]]["entity"].beliefs.keys())
+        node_belief_vectors = [
+            np.array(
+                [y for x in G_copy.nodes[node]["entity"].beliefs[iteration] for y in x]
+            )
+            for node in nodes
+        ]
+        node_keys = [str(x) for x in nodes]
+        node_belief_vec_dict = {
+            key: vec for key, vec in zip(node_keys, node_belief_vectors)
+        }
+        new_vectors = [
+            np.concatenate((ba_graph_node_embeddings[key], node_belief_vec_dict[key]))
+            for key in node_keys
+        ]
+        ba_graph_node_embeddings = Word2VecKeyedVectors(len(new_vectors[0]))
+        ba_graph_node_embeddings.add_vectors(node_keys, new_vectors)
+
     clique_seeds = np.random.choice(G_copy.nodes(), nr_of_cliques, replace=False)
     for clique_seed in clique_seeds:
         clique_size = np.random.choice(range(min_clique_size, max_clique_size + 1))
         clique_nodes = [
             int(x[0])
             for x in ba_graph_node_embeddings.most_similar(
-                clique_seed, topn=clique_size
+                str(clique_seed), topn=clique_size
             )
         ] + [clique_seed]
 
