@@ -140,11 +140,11 @@ if __name__ == "__main__":
             for node in ba_graph.nodes()
         },
     )
+    
+    belief_df = get_belief_dataframe(ba_graph)
+    print(belief_df.head(30))
 
     for node in ba_graph.nodes():
         ba_graph.nodes[node]["entity"] = None
 
     nw.visualize(ba_graph)
-
-    belief_df = get_belief_dataframe(ba_graph)
-    print(belief_df.head(30))
