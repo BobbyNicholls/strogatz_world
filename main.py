@@ -1,3 +1,12 @@
+"""
+TODO: create multiple settlements
+TODO: Use graph embeddings to compare separate settlements
+TODO: create aversions between races
+TODO: make probability distributions associated with characterics, links, and beliefs
+This main makes a settlement, initialises leaders and followers, propagaes their characteristics, creates beliefs,
+creates cliques, initialises and propagates beliefs.
+"""
+
 import matplotlib.pyplot as plt
 import networkx as nx
 import netwulf as nw
@@ -7,11 +16,11 @@ from belief_propagation.bp_around_graph import initialise_beliefs_and_propagate
 from clique_generation import make_embedded_cliques
 from utils import get_random_node_features, get_belief_dataframe
 
-LEADER_NUMBER = 3
+LEADER_NUMBER = 10
 POPULATION = 200
-NR_OF_CLIQUES = 4
-MIN_CLIQUE_SIZE = 5
-MAX_CLIQUE_SIZE = 8
+NR_OF_CLIQUES = 30
+MIN_CLIQUE_SIZE = 3
+MAX_CLIQUE_SIZE = 4
 BELIEF_PROP_ITERATIONS = 2
 
 
