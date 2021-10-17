@@ -1,8 +1,10 @@
 """
+TODO: add belief (and race?) vectors to the node embeddings so that compatible beliefs will result in closer ties
 TODO: create multiple settlements
 TODO: Use graph embeddings to compare separate settlements
 TODO: create aversions between races
 TODO: make probability distributions associated with characterics, links, and beliefs
+TODO: add migration? conflict?
 This main makes a settlement, initialises leaders and followers, propagaes their characteristics, creates beliefs,
 creates cliques, initialises and propagates beliefs.
 """
