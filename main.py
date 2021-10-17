@@ -5,14 +5,14 @@ import pandas as pd
 
 from belief_propagation.bp_around_graph import initialise_beliefs_and_propagate
 from clique_generation import make_embedded_cliques
-from utils import get_random_node_features
+from utils import get_random_node_features, get_belief_dataframe
 
-LEADER_NUMBER = 5
-POPULATION = 300
-NR_OF_CLIQUES = 10
-MIN_CLIQUE_SIZE = 2
-MAX_CLIQUE_SIZE = 6
-BELIEF_PROP_ITERATIONS = 8
+LEADER_NUMBER = 3
+POPULATION = 200
+NR_OF_CLIQUES = 4
+MIN_CLIQUE_SIZE = 5
+MAX_CLIQUE_SIZE = 8
+BELIEF_PROP_ITERATIONS = 2
 
 
 def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     # attached to already central nodes. This results in "influencer nodes" which become increasingly central as a
     # result of their centrality, exhibiting a "power-law distribution" for connectivity between nodes that more
     # accurately represents reality in social networks
-    ba_graph = nx.extended_barabasi_albert_graph(POPULATION, 1, 0.02, 0)
+    ba_graph = nx.extended_barabasi_albert_graph(POPULATION, 1, 0.01, 0)
 
     print(all([type(x) == int for x in ba_graph.nodes()]))
 
@@ -140,4 +140,7 @@ if __name__ == "__main__":
 
     print(1)
 
-    nw.visualize(ba_graph)
+    # nw.visualize(ba_graph)
+
+    belief_df = get_belief_dataframe(ba_graph)
+    print(belief_df.head(30))
