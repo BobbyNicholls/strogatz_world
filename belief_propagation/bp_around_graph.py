@@ -196,7 +196,7 @@ def initialise_and_propagate_beliefs(
 
 def propagate_beliefs(G, leaders, belief_prop_iterations):
     G_copy = G.copy()
-    iteration = max(G_copy.nodes[list(G_copy.nodes())[0]]['entity'].beliefs.keys()) + 1
+    iteration = max(G_copy.nodes[list(G_copy.nodes())[0]]["entity"].beliefs.keys()) + 1
     for _ in range(belief_prop_iterations):
         G_copy, iteration = iterate_beliefs_from_leaders_outwards(
             G_copy, leaders, iteration

@@ -143,12 +143,12 @@ if __name__ == "__main__":
         belief_prop_iterations=BELIEF_PROP_ITERATIONS,
     )
 
-    iteration = max(ba_graph.nodes[list(ba_graph.nodes())[0]]['entity'].beliefs.keys())
+    iteration = max(ba_graph.nodes[list(ba_graph.nodes())[0]]["entity"].beliefs.keys())
     ba_graph = nx.relabel_nodes(
         ba_graph,
         {
             node: f"{ba_graph.nodes[node]['race']}: {ba_graph.nodes[node]['faction']} {node} "
-                  f"{[round(y, 2) for x in ba_graph.nodes[node]['entity'].beliefs[iteration] for y in x]}"
+            f"{[round(y, 2) for x in ba_graph.nodes[node]['entity'].beliefs[iteration] for y in x]}"
             for node in ba_graph.nodes()
         },
     )
