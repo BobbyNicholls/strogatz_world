@@ -1,5 +1,4 @@
 """
-TODO: add belief (and race?) vectors to the node embeddings so that compatible beliefs will result in closer ties
 TODO: create multiple settlements
 TODO: Use graph embeddings to compare separate settlements
 TODO: create aversions between races
@@ -27,7 +26,7 @@ NR_OF_CLIQUES = 50
 MIN_CLIQUE_SIZE = 3
 MAX_CLIQUE_SIZE = 4
 BELIEF_PROP_ITERATIONS = 5
-JOIN_ON_BELIEFS = False
+JOIN_ON_BELIEFS = True
 
 
 def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
