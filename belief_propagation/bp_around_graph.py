@@ -84,11 +84,8 @@ def iterate_beliefs_from_leaders_outwards(F, leaders, iteration):
 
 
 def get_belief_string(beliefs):
-    belief_string = ""
-    for i in range(2):
-        for j in range(2):
-            belief_string += str(round(beliefs[i, j], 2)) + ", "
-    return belief_string[:-2]
+    rounded_beliefs = [str(round(a, 2)) for b in beliefs for a in b]
+    return ", ".join(rounded_beliefs)
 
 
 def initialise_and_propagate_beliefs(
@@ -96,7 +93,7 @@ def initialise_and_propagate_beliefs(
 ):
     G_copy = G.copy()
     iteration = 1
-    print(belief_prop_iterations)
+    # TODO: make leader beleifs non-random
     leader_entities = {
         leader: {
             "entity": Entity(
