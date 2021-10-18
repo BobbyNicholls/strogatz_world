@@ -24,3 +24,64 @@ factions:
  - outcasts
  - merchants
  - believers in the one true scale
+beliefs:
+ - individualism-heirarchy
+ - godless-religious
+ - structure-freedom
+ - communal-independent
+faction_belief_structure:
+ imperials:
+  individualism-heirarchy: strong_affinity
+  godless-religious: affinity
+  structure-freedom: strong_aversion
+  communal-independent: strong_aversion
+ independents:
+  individualism-heirarchy: strong_aversion
+  godless-religious: indifferent
+  structure-freedom: strong_affinity
+  communal-independent: true_random
+ pirates:
+  individualism-heirarchy: strong_aversion
+  godless-religious: aversion
+  structure-freedom: strong_affinity
+  communal-independent: strong_affinity
+ cultists:
+  individualism-heirarchy: strong_aversion
+  godless-religious: strong_affinity
+  structure-freedom: strong_aversion
+  communal-independent: strong_aversion
+ seperatists:
+  individualism-heirarchy: indifferent
+  godless-religious: indifferent
+  structure-freedom: strong_affinity
+  communal-independent: strong_affinity
+ pacifists:
+  individualism-heirarchy: indifferent
+  godless-religious: indifferent
+  structure-freedom: indifferent
+  communal-independent: affinity
+ thieves:
+  individualism-heirarchy: strong_aversion
+  godless-religious: true_random
+  structure-freedom: strong_affinity
+  communal-independent: strong_affinity
+ mages:
+  individualism-heirarchy: strong_affinity
+  godless-religious: strong_aversion
+  structure-freedom: indifferent
+  communal-independent: strong_aversion
+ outcasts:
+  individualism-heirarchy: aversion
+  godless-religious: strong_aversion
+  structure-freedom: random_indifferent
+  communal-independent: random_indifferent
+ merchants:
+  individualism-heirarchy: aversion
+  godless-religious: random_indifferent
+  structure-freedom: affinity
+  communal-independent: affinity
+ believers in the one true scale:
+  individualism-heirarchy: true_random
+  godless-religious: true_random
+  structure-freedom: true_random
+  communal-independent: true_random
