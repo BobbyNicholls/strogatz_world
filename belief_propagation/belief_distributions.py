@@ -35,6 +35,16 @@ def true_random():
     return uniform() * 10
 
 
+belief_dist_function_dict = {
+    "true_random": true_random,
+    "strong_affinity": extremely_high_affinity,
+    "affinity": quite_high_affinity,
+    "strong_aversion": extremely_high_aversion,
+    "aversion": quite_high_aversion,
+    "indifferent": indifference_with_very_little_variation,
+    "random_indifferent": indifference_with_some_variation,
+}
+
 if __name__ == "__main__":
 
     # for node in G_copy.nodes:

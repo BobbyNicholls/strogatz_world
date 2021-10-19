@@ -1,5 +1,6 @@
 from belief_propagation.bp_entity import Entity
-from utils import get_random_node_features
+from belief_propagation.belief_distributions import belief_dist_function_dict
+from utils import get_random_node_features, world_features
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -113,6 +114,7 @@ def initialise_and_propagate_beliefs(
     [
         print(
             leader_entities[x]["entity"].feature_vector["race"]
+            + f" {leader_entities[x]['entity'].feature_vector['faction']}"
             + ": "
             + get_belief_string(leader_entities[x]["entity"].beliefs[0])
         )
@@ -121,29 +123,32 @@ def initialise_and_propagate_beliefs(
     print("\n==============================================\n")
     nx.set_node_attributes(G_copy, leader_entities)
 
-    leader_races = set([G_copy.nodes[leader]["race"] for leader in leaders])
+    leader_factions = set([G_copy.nodes[leader]["faction"] for leader in leaders])
     avaialble_beliefs = {
-        race: np.array(
+        faction: np.array(
             [
-                [np.random.randint(0, 50), np.random.randint(0, 50)],
-                [np.random.randint(0, 50), np.random.randint(0, 50)],
+                list(world_features["faction_belief_structure"][faction].values())[:2],
+                list(world_features["faction_belief_structure"][faction].values())[2:],
             ]
         )
-        for race in leader_races
+        for faction in leader_factions
     }
 
     print("RACIAL BELIEF STRUCTURES:")
     [
-        print(x + ": " + get_belief_string(avaialble_beliefs[x]))
+        print(f"{x}: {avaialble_beliefs[x]}")
         for x in avaialble_beliefs.keys()
     ]
 
+    def get_mapping(x):
+        return belief_dist_function_dict[x]()
+    get_mapping_vec = np.vectorize(get_mapping)
     followers = set(G_copy.nodes()).difference(set(leaders))
     follower_entities = {
         follower: {
             "entity": Entity(
                 feature_vector=G_copy.nodes[follower],
-                beliefs=avaialble_beliefs[G_copy.nodes[follower]["race"]],
+                beliefs=get_mapping_vec(avaialble_beliefs[G_copy.nodes[follower]["faction"]]),
             )
         }
         for follower in followers

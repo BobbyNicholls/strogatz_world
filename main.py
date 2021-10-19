@@ -20,12 +20,12 @@ from belief_propagation.bp_around_graph import (
 from clique_generation import make_embedded_cliques
 from utils import get_random_node_features, get_belief_dataframe
 
-LEADER_NUMBER = 10
-POPULATION = 400
-NR_OF_CLIQUES = 50
+LEADER_NUMBER = 2
+POPULATION = 300
+NR_OF_CLIQUES = 45
 MIN_CLIQUE_SIZE = 3
-MAX_CLIQUE_SIZE = 4
-BELIEF_PROP_ITERATIONS = 5
+MAX_CLIQUE_SIZE = 7
+BELIEF_PROP_ITERATIONS = 1
 JOIN_ON_BELIEFS = True
 
 
@@ -126,7 +126,7 @@ if __name__ == "__main__":
         ba_graph,
         leaders,
         visualise_at_end=False,
-        belief_prop_iterations=1,
+        belief_prop_iterations=0,
     )
 
     ba_graph = make_embedded_cliques(
@@ -154,7 +154,7 @@ if __name__ == "__main__":
     )
 
     belief_df = get_belief_dataframe(ba_graph)
-    print(belief_df.head(30))
+    # print(belief_df.head(30))
 
     for node in ba_graph.nodes():
         ba_graph.nodes[node]["entity"] = None
