@@ -14,3 +14,9 @@ where the beliefs of a given entity can be updated by the beliefs of a linked
 entity through belief propagation and links represent probabilistic dependencies. A "child" entity has beliefs that are conditional
 on the "parent" entity, in this case the "parent" can be simply an influential node in
 the network, not necessarily the actual parent of the entity.
+
+Things I still want to do:
+1.   Use graph embeddings to compare separate settlements
+2.   Create aversions between factions and characters
+3.   Make probability distributions associated with characterics, links, and beliefs (partly done)
+4.   Add migration? Conflict?
