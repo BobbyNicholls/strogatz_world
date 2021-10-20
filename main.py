@@ -16,25 +16,37 @@ import pandas as pd
 from belief_propagation.bp_around_graph import (
     initialise_and_propagate_beliefs,
     propagate_beliefs,
+    get_belief_string,
 )
 from clique_generation import make_embedded_cliques
 from utils import get_random_node_features, get_belief_dataframe
 
-NR_OF_FACTIONS = 5
-POPULATION = 75
-NR_OF_CLIQUES = 20
+NR_OF_FACTIONS = 3
+POPULATION = 25
+NR_OF_CLIQUES = 5
 MIN_CLIQUE_SIZE = 3
-MAX_CLIQUE_SIZE = 4
+MAX_CLIQUE_SIZE = 3
 BELIEF_PROP_ITERATIONS = 5
 JOIN_ON_BELIEFS = True
 
 
-def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
+def draw_graph(G, pos_nodes, node_names={}, node_size=150, plot_weight=False):
 
-    labels = {
-        node: G.nodes[node]["race"] + " " + G.nodes[node]["faction"]
-        for node in G.nodes()
-    }
+    try:
+        iteration = max(G.nodes[list(G.nodes())[0]]["entity"].beliefs.keys())
+        labels = {
+            node: G.nodes[node]["race"]
+            + " "
+            + G.nodes[node]["faction"]
+            + " "
+            + get_belief_string(G.nodes[node]["entity"].beliefs[iteration])
+            for node in G.nodes()
+        }
+    except KeyError:
+        labels = {
+            node: G.nodes[node]["race"] + " " + G.nodes[node]["faction"]
+            for node in G.nodes()
+        }
     checked_values = set()
     for key in labels.keys():
         value = labels[key]
@@ -44,10 +56,22 @@ def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
             labels[key] = ""
     colour_keys = list(set(labels.values()))
     col_dict = {colour_keys[i]: i for i in range(len(colour_keys))}
-    colours = [
-        col_dict[G.nodes[node]["race"] + " " + G.nodes[node]["faction"]]
-        for node in G.nodes()
-    ]
+    try:
+        colours = [
+            col_dict[
+                G.nodes[node]["race"]
+                + " "
+                + G.nodes[node]["faction"]
+                + " "
+                + get_belief_string(G.nodes[node]["entity"].beliefs[iteration])
+            ]
+            for node in G.nodes()
+        ]
+    except KeyError:
+        colours = [
+            col_dict[G.nodes[node]["race"] + " " + G.nodes[node]["faction"]]
+            for node in G.nodes()
+        ]
 
     nx.draw(
         G,
@@ -61,7 +85,7 @@ def draw_graph(G, pos_nodes, node_names={}, node_size=50, plot_weight=False):
 
     pos_attrs = {}
     for node, coords in pos_nodes.items():
-        pos_attrs[node] = (coords[0], coords[1] + 0.08)
+        pos_attrs[node] = (coords[0], coords[1] + 0.03)
 
     nx.draw_networkx_labels(
         G,
@@ -148,6 +172,7 @@ def get_settlement(
     nx.set_node_attributes(ba_graph, leader_node_attributes)
     ba_graph = propagate_leader_node_attributes(ba_graph, leaders)
     pos = nx.spring_layout(ba_graph)
+    plt.rcParams["figure.figsize"] = (10, 10)
     draw_graph(ba_graph, pos)
 
     for node in ba_graph.nodes():
