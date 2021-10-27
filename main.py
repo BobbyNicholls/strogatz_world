@@ -21,16 +21,16 @@ from belief_propagation.bp_around_graph import (
 from clique_generation import make_embedded_cliques
 from utils import get_random_node_features, get_belief_dataframe
 
-NR_OF_FACTIONS = 3
-POPULATION = 25
-NR_OF_CLIQUES = 5
+NR_OF_FACTIONS = 2
+POPULATION = 50
+NR_OF_CLIQUES = 10
 MIN_CLIQUE_SIZE = 3
-MAX_CLIQUE_SIZE = 3
+MAX_CLIQUE_SIZE = 5
 BELIEF_PROP_ITERATIONS = 5
 JOIN_ON_BELIEFS = True
 
 
-def draw_graph(G, pos_nodes, node_names={}, node_size=150, plot_weight=False):
+def draw_graph(G, pos_nodes, node_names={}, node_size=150, plot_weight=False, colour_nodes_on_belief=True):
 
     try:
         iteration = max(G.nodes[list(G.nodes())[0]]["entity"].beliefs.keys())
@@ -38,8 +38,8 @@ def draw_graph(G, pos_nodes, node_names={}, node_size=150, plot_weight=False):
             node: G.nodes[node]["race"]
             + " "
             + G.nodes[node]["faction"]
-            + " "
-            + get_belief_string(G.nodes[node]["entity"].beliefs[iteration])
+            # + " "
+            # + get_belief_string(G.nodes[node]["entity"].beliefs[iteration])
             for node in G.nodes()
         }
     except KeyError:
@@ -48,8 +48,7 @@ def draw_graph(G, pos_nodes, node_names={}, node_size=150, plot_weight=False):
             for node in G.nodes()
         }
     checked_values = set()
-    for key in labels.keys():
-        value = labels[key]
+    for key, value in labels.items():
         if value not in checked_values:
             checked_values.add(value)
         else:
@@ -57,16 +56,20 @@ def draw_graph(G, pos_nodes, node_names={}, node_size=150, plot_weight=False):
     colour_keys = list(set(labels.values()))
     col_dict = {colour_keys[i]: i for i in range(len(colour_keys))}
     try:
-        colours = [
-            col_dict[
-                G.nodes[node]["race"]
-                + " "
-                + G.nodes[node]["faction"]
-                + " "
-                + get_belief_string(G.nodes[node]["entity"].beliefs[iteration])
+        if colour_nodes_on_belief:
+            colours = [tuple(list(G.nodes[node]["entity"].beliefs[iteration][0]) + list(
+                G.nodes[node]["entity"].beliefs[iteration][1][:1])) for node in G.nodes()]
+        else:
+            colours = [
+                col_dict[
+                    G.nodes[node]["race"]
+                    + " "
+                    + G.nodes[node]["faction"]
+                    + " "
+                    + get_belief_string(G.nodes[node]["entity"].beliefs[iteration])
+                ]
+                for node in G.nodes()
             ]
-            for node in G.nodes()
-        ]
     except KeyError:
         colours = [
             col_dict[G.nodes[node]["race"] + " " + G.nodes[node]["faction"]]
@@ -171,7 +174,7 @@ def get_settlement(
     leader_node_attributes = get_leader_node_attributes(leaders)
     nx.set_node_attributes(ba_graph, leader_node_attributes)
     ba_graph = propagate_leader_node_attributes(ba_graph, leaders)
-    pos = nx.spring_layout(ba_graph)
+    pos = nx.kamada_kawai_layout(ba_graph)
     plt.rcParams["figure.figsize"] = (10, 10)
     draw_graph(ba_graph, pos)
 
@@ -189,6 +192,8 @@ def get_settlement(
         belief_prop_iterations=0,
     )
 
+    draw_graph(ba_graph, pos)
+
     ba_graph = make_embedded_cliques(
         ba_graph,
         nr_of_cliques=nr_of_cliques,
@@ -197,15 +202,19 @@ def get_settlement(
         join_on_beliefs=join_on_beliefs,
     )
     draw_graph(ba_graph, pos)
-    draw_graph(ba_graph, nx.spring_layout(ba_graph))
+    pos = nx.kamada_kawai_layout(ba_graph)
+    draw_graph(ba_graph, pos)
 
     # nw.visualize(ba_graph)
+    for _ in range(belief_prop_iterations):
+        ba_graph = propagate_beliefs(
+            ba_graph,
+            leaders,
+            belief_prop_iterations=1,
+        )
+        draw_graph(ba_graph, pos)
 
-    ba_graph = propagate_beliefs(
-        ba_graph,
-        leaders,
-        belief_prop_iterations=belief_prop_iterations,
-    )
+    # draw_graph(ba_graph, pos)
 
     iteration = max(ba_graph.nodes[list(ba_graph.nodes())[0]]["entity"].beliefs.keys())
     ba_graph = nx.relabel_nodes(
