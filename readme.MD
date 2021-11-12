@@ -21,3 +21,5 @@ Things I still want to do:
 3.   Make probability distributions associated with characterics, links, and beliefs (partly done)
 4.   Add migration? Conflict?
 5.   Check out multivariate distributions like: https://en.wikipedia.org/wiki/Copula_(probability_theory)
+6.   Visualise this in 3D, possibly using unreal engine.
+7.   Recode some of the compute/memory intensive aspects in C++.
