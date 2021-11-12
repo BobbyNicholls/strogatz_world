@@ -20,3 +20,4 @@ Things I still want to do:
 2.   Create aversions between factions and characters
 3.   Make probability distributions associated with characterics, links, and beliefs (partly done)
 4.   Add migration? Conflict?
+5.   Check out multivariate distributions like: https://en.wikipedia.org/wiki/Copula_(probability_theory)
