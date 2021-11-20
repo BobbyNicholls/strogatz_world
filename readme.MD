@@ -5,7 +5,7 @@ the individual entities in the network and a belief matrix can be created. The p
 is then designed to propagate beliefs of nodes around the network to demonstrate
 the way beliefs are propagated around social networks by influential members of the network.
 
-This is for making fictional worlds.
+This is for making fictional social networks.
 
 It uses some Graph Machine Learning concepts to have intelligent evolving networks that use a form of
 belief propagation based on the "Loopy belief propagation" algorithm. The networks are
