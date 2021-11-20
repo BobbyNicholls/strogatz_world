@@ -1,4 +1,4 @@
-This is fundamentally intended as a fun demonstration of Graph Theory concepts that are becoming increasingly important in modern Machine Learning.
+This is fundamentally intended as a fun demonstration of **Graph Theory** concepts that are becoming increasingly important in modern Machine Learning.
 
 This creates randomly generated social networks, a feature vector is associated with
 the individual entities in the network and a belief matrix can be created. The programme
