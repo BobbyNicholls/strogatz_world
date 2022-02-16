@@ -1,9 +1,11 @@
+This is fundamentally intended as a fun demonstration of **Graph Theory** concepts that are becoming increasingly important in modern Machine Learning.
+
 This creates randomly generated social networks, a feature vector is associated with
 the individual entities in the network and a belief matrix can be created. The programme
 is then designed to propagate beliefs of nodes around the network to demonstrate
 the way beliefs are propagated around social networks by influential members of the network.
 
-This is for making fictional worlds.
+This is for making fictional social networks.
 
 It uses some Graph Machine Learning concepts to have intelligent evolving networks that use a form of
 belief propagation based on the "Loopy belief propagation" algorithm. The networks are
@@ -20,3 +22,6 @@ Things I still want to do:
 2.   Create aversions between factions and characters
 3.   Make probability distributions associated with characterics, links, and beliefs (partly done)
 4.   Add migration? Conflict?
+5.   Check out multivariate distributions like: https://en.wikipedia.org/wiki/Copula_(probability_theory)
+6.   Visualise this in 3D, possibly using unreal engine.
+7.   Recode some of the compute/memory intensive aspects in C++.
