@@ -13,7 +13,7 @@ import networkx as nx
 import netwulf as nw
 import pandas as pd
 
-from belief_propagation.bp_around_graph import (
+from belief_propagation.bp_around_graph import(
     initialise_and_propagate_beliefs,
     propagate_beliefs,
     get_belief_string,
@@ -21,11 +21,11 @@ from belief_propagation.bp_around_graph import (
 from clique_generation import make_embedded_cliques
 from utils import get_random_node_features, get_belief_dataframe
 
-NR_OF_FACTIONS = 2
-POPULATION = 50
-NR_OF_CLIQUES = 10
+NR_OF_FACTIONS = 10
+POPULATION = 800
+NR_OF_CLIQUES = 60
 MIN_CLIQUE_SIZE = 3
-MAX_CLIQUE_SIZE = 5
+MAX_CLIQUE_SIZE = 9
 BELIEF_PROP_ITERATIONS = 5
 JOIN_ON_BELIEFS = True
 
